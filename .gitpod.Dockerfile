@@ -1,14 +1,28 @@
-FROM gitpod/workspace-full
+# syntax = docker/dockerfile:1.2
+# WARNING! Use `DOCKER_BUILDKIT=1` with `docker build` to enable --mount feature.
 
-# Go
-ENV GO_VERSION=1.18.1
-ENV GOPATH=$HOME/go-packages
-ENV GOROOT=$HOME/go
-ENV PATH=$GOROOT/bin:$GOPATH/bin:$PATH
-RUN curl -fsSL https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz | tar xzs     && printf '%s\n' 'export GOPATH=/workspace/go'                       'export PATH=$GOPATH/bin:$PATH' > $HOME/.bashrc.d/300-go
+## prep the base image.
+#
+FROM golang:1.18.0-bullseye as base
 
-# GH CLI
-RUN brew install gh
+RUN apt update && \
+    apt-get install -y \
+        build-essential \
+        ca-certificates \
+        curl && \
+    curl https://get.ignite.com/cli! | bash && \
+    curl https://get.ignite.com/cli | bash && \
+    sudo mv ignite /usr/local/bin/
 
-# NPM
-RUN npm install -g npm@7.10.0
+# enable faster module downloading.
+ENV GOPROXY https://proxy.golang.org
+
+# see docs for exposed ports:
+#   https://docs.ignite.com/kb/config.html#host
+EXPOSE 26657
+EXPOSE 26656
+EXPOSE 6060 
+EXPOSE 9090 
+EXPOSE 1317 
+
+ENTRYPOINT ["ignite"]
