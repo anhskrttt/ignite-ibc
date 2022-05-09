@@ -8,7 +8,7 @@ tasks:
     init: echo 'init script' # runs during prebuild
     command: echo 'start script'
 
-  - name: Terminal 2
+  # - name: Terminal 2
     # init: npm install
     # command: npm run
 
